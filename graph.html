@@ -70,30 +70,28 @@
     //     update(data.links, data.nodes);
     //   }
     // });
-
-
     // d3.json("http://localhost/graph/graph.json", function (error, graph) {
     //     if (error) throw error;
     //     update(graph.links, graph.nodes);
     // });
 
-    var menu = [
-        {
-            title: 'Up',
-            action: function(d, i) {
-                console.log('Item #1 clicked!');
-                console.log('The data for this circle is: ' + d);
-            },
-            disabled: false // optional, defaults to false
-        },
-        {
-            title: 'Down',
-            action: function(d, i) {
-                console.log('You have clicked the second item!');
-                console.log('The data for this circle is: ' + d.id);
-            }
-        }
-    ];
+    // var menu = [
+    //     {
+    //         title: 'Up',
+    //         action: function(d, i) {
+    //             console.log('Item #1 clicked!');
+    //             console.log('The data for this circle is: ' + d);
+    //         },
+    //         disabled: false // optional, defaults to false
+    //     },
+    //     {
+    //         title: 'Down',
+    //         action: function(d, i) {
+    //             console.log('You have clicked the second item!');
+    //             console.log('The data for this circle is: ' + d.id);
+    //         }
+    //     }
+    // ];
 
     var graph = {
         "nodes": [
@@ -122,23 +120,27 @@
             {
                 "source": 1,
                 "target": 2,
-                "type": "15",
-                "id": 2010
+                "type": 15,
+                "id": 1
             },
             {
                 "source": 1,
                 "target": 3,
-                "type": "5"
+                "type": 5,
+                "id": 2
+
             },
             {
                 "source": 2,
                 "target": 3,
-                "type": "20"
+                "type": 20,
+                "id": 3
             },
             {
                 "source": 3,
                 "target": 4,
-                "type": "10"
+                "type": 10,
+                "id": 4
             }
         ]
     };
@@ -150,18 +152,22 @@
             .data(links)
             .enter()
             .append("line")
-            .attr("class", "link")
-            .on('click', d3.contextMenu(menu, {
-                onOpen: function (data, index) {
-                    console.log('Menu Opened!', 'element:', this, 'data:', data, 'index:', index);
-                },
-                onClose: function (data, index) {
-                    console.log('Menu Closed!', 'element:', this, 'data:', data, 'index:', index);
-                }
-            }));
+            .attr('tabindex', '0')
+            .attr('focusable', 'true')
+            .attr("class", "link");
+            // .on('click', d3.contextMenu(menu, {
+            //     onOpen: function (data, index) {
+            //         console.log('Menu Opened!', 'element:', this, 'data:', data, 'index:', index);
+            //     },
+            //     onClose: function (data, index) {
+            //         console.log('Menu Closed!', 'element:', this, 'data:', data, 'index:', index);
+            //     }
+            //
+            // }));
             // .attr('marker-end','url(#arrowhead)');
 
         link.append("title")
+            .attr("class", function (d) {return "title" + d.id})
             .text(function (d) {return d.type;});
 
         edgepaths = svg.selectAll(".edgepath")
@@ -172,7 +178,7 @@
                 'class': 'edgepath',
                 'fill-opacity': 0,
                 'stroke-opacity': 0,
-                'id': function (d, i) {return 'edgepath' + i}
+                'id': function (d, i) {return 'edgepath' + d.type}
             })
             .style("pointer-events", "none");
 
@@ -183,17 +189,36 @@
             .style("pointer-events", "none")
             .attrs({
                 'class': 'edgelabel',
-                'id': function (d, i) {return 'edgelabel' + i},
+                'id': function (d, i) {return 'edgelabel' + d.type},
                 'font-size': 20,
                 'fill': '#555'
             });
 
         edgelabels.append('textPath')
-            .attr('xlink:href', function (d, i) {return '#edgepath' + i})
+            .attrs({
+                'xlink:href': function (d, i) {return '#edgepath' + d.type},
+                'class': function (d) {return 'id' + d.type}
+            })
             .style("text-anchor", "middle")
             .style("pointer-events", "none")
             .attr("startOffset", "50%")
             .text(function (d) {return d.type});
+
+        link.on("keydown", function(data) {
+                console.log("Congrats, you pressed a key!\n" + d3.event.keyCode);
+                if (d3.event.keyCode === 38){
+                    console.log('element:', this, 'data:', data);
+                    console.log('value :' + svg.select("#edgelabel" + data.id).select(".id" + data.id));
+                    data.type += 1;
+                }
+                else if (d3.event.keyCode === 40){
+                    console.log('element:', this, 'data:', data);
+                    console.log('value :' + svg.select("#edgelabel" + data.id).select(".id" + data.id));
+                    data.type -= 1;
+                }
+                edgelabels.selectAll("textPath")
+                .text(function (d) {return d.type});
+            });
 
         node = svg.selectAll(".node")
             .data(nodes)
@@ -250,7 +275,7 @@
             else {
                 return 'rotate(0)';
             }
-        });
+            });
     }
 
     function dragstarted(d) {
