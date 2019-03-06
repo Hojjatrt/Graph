@@ -4,16 +4,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="d3-context-menu.css" rel="stylesheet">
     <style type="text/css">
         .node {}
 
-        .link { stroke: #999; stroke-opacity: .6; stroke-width: 1px; }
+        .link { stroke: #999; stroke-opacity: 1; stroke-width: 5px; }
     </style>
 </head>
 <body>
 <svg width="960" height="600"></svg>
 
 <script src="d3.v4.min.js" type="text/javascript"></script>
+<script src="d3-context-menu.js" type="text/javascript"></script>
 <script src="d3-selection-multi.v1.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -44,10 +46,104 @@
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
 
-    d3.json("graph.json", function (error, graph) {
-        if (error) throw error;
-        update(graph.links, graph.nodes);
-    })
+
+    // var getJSON = function(url, callback) {
+    //   var xhr = new XMLHttpRequest();
+    //   xhr.open('get', url, true);
+    //   xhr.responseType = 'json';
+    //   xhr.onload = function() {
+    //     var status = xhr.status;
+    //     if (status === 200) {
+    //       callback(null, xhr.response);
+    //     } else {
+    //       callback(status);
+    //     }
+    //   };
+    //   xhr.send();
+    // };
+    //
+    // getJSON('graph.json', function(err, data) {
+    //   if (err != null) {
+    //     alert('Something went wrong: ' + err);
+    //   } else {
+    //     alert('Your Json result is:  ' + data);
+    //     update(data.links, data.nodes);
+    //   }
+    // });
+
+
+    // d3.json("http://localhost/graph/graph.json", function (error, graph) {
+    //     if (error) throw error;
+    //     update(graph.links, graph.nodes);
+    // });
+
+    var menu = [
+        {
+            title: 'Up',
+            action: function(d, i) {
+                console.log('Item #1 clicked!');
+                console.log('The data for this circle is: ' + d);
+            },
+            disabled: false // optional, defaults to false
+        },
+        {
+            title: 'Down',
+            action: function(d, i) {
+                console.log('You have clicked the second item!');
+                console.log('The data for this circle is: ' + d.id);
+            }
+        }
+    ];
+
+    var graph = {
+        "nodes": [
+            {
+                "name": "node1",
+                "label": "",
+                "id": 1
+            },
+            {
+                "name": "node2",
+                "label": "",
+                "id": 2
+            },
+            {
+                "name": "node3",
+                "label": "",
+                "id": 3
+            },
+            {
+                "name": "node4",
+                "label": "",
+                "id": 4
+            }
+        ],
+        "links": [
+            {
+                "source": 1,
+                "target": 2,
+                "type": "15",
+                "id": 2010
+            },
+            {
+                "source": 1,
+                "target": 3,
+                "type": "5"
+            },
+            {
+                "source": 2,
+                "target": 3,
+                "type": "20"
+            },
+            {
+                "source": 3,
+                "target": 4,
+                "type": "10"
+            }
+        ]
+    };
+
+    update(graph.links, graph.nodes);
 
     function update(links, nodes) {
         link = svg.selectAll(".link")
@@ -55,7 +151,15 @@
             .enter()
             .append("line")
             .attr("class", "link")
-            .attr('marker-end','url(#arrowhead)')
+            .on('click', d3.contextMenu(menu, {
+                onOpen: function (data, index) {
+                    console.log('Menu Opened!', 'element:', this, 'data:', data, 'index:', index);
+                },
+                onClose: function (data, index) {
+                    console.log('Menu Closed!', 'element:', this, 'data:', data, 'index:', index);
+                }
+            }));
+            // .attr('marker-end','url(#arrowhead)');
 
         link.append("title")
             .text(function (d) {return d.type;});
@@ -80,8 +184,8 @@
             .attrs({
                 'class': 'edgelabel',
                 'id': function (d, i) {return 'edgelabel' + i},
-                'font-size': 10,
-                'fill': '#aaa'
+                'font-size': 20,
+                'fill': '#555'
             });
 
         edgelabels.append('textPath')
@@ -99,19 +203,19 @@
             .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
-                    //.on("end", dragended)
+                    .on("end", dragended)
             );
 
         node.append("circle")
-            .attr("r", 5)
-            .style("fill", function (d, i) {return colors(i);})
+            .attr("r", 10)
+            .style("fill", colors(1));
 
         node.append("title")
             .text(function (d) {return d.id;});
 
         node.append("text")
             .attr("dy", -3)
-            .text(function (d) {return d.name+":"+d.label;});
+            .text(function (d) {return d.name;});
 
         simulation
             .nodes(nodes)
@@ -150,7 +254,7 @@
     }
 
     function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
@@ -160,11 +264,11 @@
         d.fy = d3.event.y;
     }
 
-//    function dragended(d) {
-//        if (!d3.event.active) simulation.alphaTarget(0);
-//        d.fx = undefined;
-//        d.fy = undefined;
-//    }
+   function dragended(d) {
+       if (!d3.event.active) simulation.alphaTarget(0);
+       d.fx = undefined;
+       d.fy = undefined;
+   }
 
 </script>
 
