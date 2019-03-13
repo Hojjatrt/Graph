@@ -9,11 +9,12 @@
         .node {}
 
         .link { stroke: #999; stroke-opacity: 1; stroke-width: 5px; }
+        .long_link { stroke: #f22115; stroke-opacity: 1; stroke-width: 5px; }
     </style>
 </head>
 <body>
+<h4 style="color: #4677f8; margin: 5px 20px" class="longest-path">Longest path from node1 to node7 is : </h4>
 <svg width="960" height="600"></svg>
-
 <script src="d3.v4.min.js" type="text/javascript"></script>
 <script src="d3-context-menu.js" type="text/javascript"></script>
 <script src="d3-selection-multi.v1.js" type="text/javascript"></script>
@@ -26,6 +27,8 @@
         height = +svg.attr("height"),
         node,
         link;
+
+    var longest_path = d3.select("body").select(".longest-path");
 
     svg.append('defs').append('marker')
         .attrs({'id':'arrowhead',
@@ -156,51 +159,61 @@
             {
                 "source": 1,
                 "target": 2,
-                "type": 15,
+                "weight": 15,
                 "id": 1
             },
             {
                 "source": 2,
                 "target": 3,
-                "type": 5,
+                "weight": 5,
                 "id": 2
 
             },
             {
                 "source": 2,
                 "target": 4,
-                "type": 20,
+                "weight": 20,
                 "id": 3
             },
             {
                 "source": 4,
                 "target": 5,
-                "type": 10,
+                "weight": 10,
                 "id": 4
             },
             {
                 "source": 4,
                 "target": 6,
-                "type": 5,
+                "weight": 5,
                 "id": 5
 
             },
             {
                 "source": 6,
                 "target": 7,
-                "type": 20,
+                "weight": 20,
                 "id": 6
             },
             {
                 "source": 6,
                 "target": 8,
-                "type": 10,
+                "weight": 10,
                 "id": 7
             }
         ]
     };
 
     update(graph.links, graph.nodes);
+
+    //for longest path
+    var newgraph = {};
+    graph.nodes.forEach(function (node) {
+        newgraph[node.name] = {};
+    });
+    graph.links.forEach(function (link) {
+        newgraph[link.source.name][link.target.name] = link.weight;
+        newgraph[link.target.name][link.source.name] = link.weight;
+    });
 
     function update(links, nodes) {
         link = svg.selectAll(".link")
@@ -223,7 +236,7 @@
 
         link.append("title")
             .attr("class", function (d) {return "title" + d.id})
-            .text(function (d) {return d.type;});
+            .text(function (d) {return d.weight;});
 
         edgepaths = svg.selectAll(".edgepath")
             .data(links)
@@ -257,20 +270,31 @@
             .style("text-anchor", "middle")
             .style("pointer-events", "none")
             .attr("startOffset", "50%")
-            .text(function (d) {return d.type});
+            .text(function (d) {return d.weight});
 
         link.on("keydown", function(data) {
                 console.log("Congrats, you pressed a key!\n" + d3.event.keyCode);
                 if (d3.event.keyCode === 38){
                     console.log('data:', data);
-                    data.type += 1;
+                    data.weight += 1;
                 }
                 else if (d3.event.keyCode === 40){
                     console.log('data:', data);
-                    data.type -= 1;
+                    if (data.weight > 0)
+                        data.weight -= 1;
                 }
                 edgelabels.selectAll("textPath")
-                .text(function (d) {return d.type});
+                .text(function (d) {
+                    return d.weight
+                });
+                newgraph[data.source.name][data.target.name] = data.weight;
+                newgraph[data.target.name][data.source.name] = data.weight;
+                //choose start node
+                var start = 'node1';
+                //get all solutions
+                var solutions = solve(newgraph, start);
+                longest_path.text("Longest path from node1 to node7 is : " + solutions["node7"].dist);
+
             });
 
         node = svg.selectAll(".node")
@@ -357,7 +381,7 @@
       while(true) {
         var parent = null;
         var nearest = null;
-        var dist = Infinity;
+        var dist = -Infinity;
 
         //for each existing solution
         for(var n in solutions) {
@@ -372,7 +396,7 @@
               continue;
             //choose nearest node with lowest *total* cost
             var d = adj[a] + ndist;
-            if(d < dist) {
+            if(d > dist) {
               //reference parent
               parent = solutions[n];
               nearest = a;
@@ -382,7 +406,7 @@
         }
 
         //no more solutions
-        if(dist === Infinity) {
+        if(dist === -Infinity) {
             break;
         }
 
@@ -394,18 +418,26 @@
 
       return solutions;
     }
-    var newgraph = {
-        'a': {'e':1, 'b':2, 'g':3},
-        'b': {'a':2, 'c':5},
-        'c': {'b':5, 'd':1},
-        'd': {'c':1, 'e':3},
-        'e': {'d':3, 'a':1},
-        'f': {'g':1, 'h':9},
-        'g': {'a':3, 'f':1},
-        'h': {'f':9}
-    };
+    // var newgraph = {
+    //     'a': {'e':1, 'b':2, 'g':3},
+    //     'b': {'a':2, 'c':5},
+    //     'c': {'b':5, 'd':1},
+    //     'd': {'c':1, 'e':3},
+    //     'e': {'d':3, 'a':1},
+    //     'f': {'g':1, 'h':9},
+    //     'g': {'a':3, 'f':1},
+    //     'h': {'f':9}
+    // };
+    // newgraph = {};
+    // graph.nodes.forEach(function (node) {
+    //     newgraph[node.name] = {};
+    // });
+    // graph.links.forEach(function (link) {
+    //     newgraph[link.source.name][link.target.name] = link.weight;
+    //     newgraph[link.target.name][link.source.name] = link.weight;
+    // });
     //choose start node
-    var start = 'a';
+    var start = 'node1';
     //get all solutions
     var solutions = solve(newgraph, start);
 
@@ -415,6 +447,7 @@
       if(!solutions[s]) continue;
       console.log(" -> " + s + ": [" + solutions[s].join(", ") + "]   (dist:" + solutions[s].dist + ")");
     }
+
 </script>
 
 </body>
