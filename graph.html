@@ -9,7 +9,8 @@
         .node {}
 
         .link { stroke: #999; stroke-opacity: 1; stroke-width: 5px; }
-        .long_link { stroke: #f22115; stroke-opacity: 1; stroke-width: 5px; }
+        .long { stroke: red; stroke-opacity: 1; stroke-width: 5px; }
+        .red { font-weight: bold; color: red; font-size: large }
     </style>
 </head>
 <body>
@@ -214,6 +215,8 @@
         newgraph[link.source.name][link.target.name] = link.weight;
         newgraph[link.target.name][link.source.name] = link.weight;
     });
+    //choose start node
+    var start = 'node1';
 
     function update(links, nodes) {
         link = svg.selectAll(".link")
@@ -289,12 +292,8 @@
                 });
                 newgraph[data.source.name][data.target.name] = data.weight;
                 newgraph[data.target.name][data.source.name] = data.weight;
-                //choose start node
-                var start = 'node1';
-                //get all solutions
-                var solutions = solve(newgraph, start);
-                longest_path.text("Longest path from node1 to node7 is : " + solutions["node7"].dist);
 
+                colorGraph(start, link, newgraph);
             });
 
         node = svg.selectAll(".node")
@@ -418,6 +417,40 @@
 
       return solutions;
     }
+
+    function colorGraph(start, links, newgraph) {
+        //get all solutions
+        var solutions = solve(newgraph, start);
+        //limit solutions
+        var maximum_dist = {};
+        maximum_dist.dist = 0;
+        for(var s in solutions) {
+          if(!solutions[s]) continue;
+          if(solutions[s].dist > maximum_dist.dist)
+              maximum_dist = solutions[s];
+        }
+        console.log(solutions, maximum_dist);
+        longest_path.html("Longest path from <span class='red'>" + start + "</span> to <span class='red'>" + maximum_dist[maximum_dist.length - 1] +
+            "</span> is : " + maximum_dist.dist);
+        var prev = start;
+        links.each(function (d) {
+           d3.select(this).attr("class", "link");
+        });
+        for(var s in maximum_dist){
+            links.each(function (d) {
+                if(d.source.name === prev && d.target.name === maximum_dist[s])
+                {
+                    d3.select(this).attr("class", "link long");
+                    return
+                }
+            });
+            prev = maximum_dist[s];
+        }
+    }
+
+    var links = svg.selectAll(".link");
+    colorGraph("node1", links, newgraph);
+
     // var newgraph = {
     //     'a': {'e':1, 'b':2, 'g':3},
     //     'b': {'a':2, 'c':5},
@@ -436,17 +469,22 @@
     //     newgraph[link.source.name][link.target.name] = link.weight;
     //     newgraph[link.target.name][link.source.name] = link.weight;
     // });
-    //choose start node
-    var start = 'node1';
-    //get all solutions
-    var solutions = solve(newgraph, start);
 
-    console.log("From '"+start+"' to");
-    //display solutions
-    for(var s in solutions) {
-      if(!solutions[s]) continue;
-      console.log(" -> " + s + ": [" + solutions[s].join(", ") + "]   (dist:" + solutions[s].dist + ")");
-    }
+
+    // maximum_dist.forEach(function (value) {
+    //     svg.selectAll(".link").classed("long-link", function (d, i) {
+    //         console.log(i, d, value);
+    //         if(d.source.name === start && d.target.name === value)
+    //             return true;
+    //         if(d.source.name === prev && d.target.name === value)
+    //             return true;
+    //     });
+    //     var prev = value;
+    // });
+    // svg.selectAll(".link").classed("long-link", function (d, i) {
+    //     if (d.source.name === start)
+    //         return true
+    // });
 
 </script>
 
