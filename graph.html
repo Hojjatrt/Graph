@@ -449,7 +449,7 @@
     }
 
     var links = svg.selectAll(".link");
-    colorGraph("node1", links, newgraph);
+    colorGraph(start, links, newgraph);
 
     // var newgraph = {
     //     'a': {'e':1, 'b':2, 'g':3},
@@ -461,30 +461,6 @@
     //     'g': {'a':3, 'f':1},
     //     'h': {'f':9}
     // };
-    // newgraph = {};
-    // graph.nodes.forEach(function (node) {
-    //     newgraph[node.name] = {};
-    // });
-    // graph.links.forEach(function (link) {
-    //     newgraph[link.source.name][link.target.name] = link.weight;
-    //     newgraph[link.target.name][link.source.name] = link.weight;
-    // });
-
-
-    // maximum_dist.forEach(function (value) {
-    //     svg.selectAll(".link").classed("long-link", function (d, i) {
-    //         console.log(i, d, value);
-    //         if(d.source.name === start && d.target.name === value)
-    //             return true;
-    //         if(d.source.name === prev && d.target.name === value)
-    //             return true;
-    //     });
-    //     var prev = value;
-    // });
-    // svg.selectAll(".link").classed("long-link", function (d, i) {
-    //     if (d.source.name === start)
-    //         return true
-    // });
 
 </script>
 
