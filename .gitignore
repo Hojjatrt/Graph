@@ -1,2 +1,7 @@
 # pyCharm .idea/
 .idea/
+
+# pictures
+*.PNG
+*.jpg
+*.png
