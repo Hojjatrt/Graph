@@ -1,0 +1,52 @@
+body {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  /*color:#333333;*/
+}
+
+div {
+  display: block;
+}
+
+p {
+  font-size:12pt;
+  margin: 0 50px 5px;
+}
+textarea {
+  resize: none;
+}
+
+.header{
+  height: 300px;
+  padding: 100px;
+  margin: 50px 0;
+}
+
+.footer{
+  bottom: 0;
+}
+
+#wraper{
+    margin: 7rem auto;
+}
+
+#error {
+  float:left;
+  padding: 10px 10px;
+  width:570px;
+}
+
+#error p  {
+  margin: 0 10px 5px 40px;
+  color:red;
+  font: 10pt monospace;
+  text-indent: -30px;
+}
+
+#submit, #visit_submit{
+    margin: 10px 0;
+}
+
+#preview{
+  border-radius: 7px;
+}

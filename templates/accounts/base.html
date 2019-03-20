@@ -1,0 +1,44 @@
+{% load static %}
+{% load staticfiles %}
+<html>
+<head>
+    <!-- Materialize CSS -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Overpass:300,400,400i,600,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'accounts/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    {% block head %}
+    {% endblock %}
+    <title>
+        {% block title %}
+            Profile
+        {% endblock %}
+    </title>
+
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="navbar-fixed">
+        <nav class="blue">
+            <div class="nav-wrapper container">
+                <a href="/" class="brand-logo center">Graph</a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a href="{% url 'accounts:logout' %}">Log out</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+    {% block content %}
+    {% endblock %}
+  <script src="{% static 'accounts/js/jquery.min.js' %}"></script>
+  <script src="{% static 'accounts/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

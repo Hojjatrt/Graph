@@ -1,0 +1,103 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Graph longest path{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="{% static 'accounts/js/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'accounts/fonts' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/css.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/scrolling-nav.css' %}">
+    {% block head %}
+    {% endblock %}
+</head>
+<body id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top mb-5" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="{% url 'app:index' %}">Graph</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+          {% block nav %}
+              {% if user.is_anonymous %}
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="{% url 'accounts:login' %}">Sign in</a>
+            </li>
+              {% else %}
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="{% url 'accounts:profile' %}">Welcome {{ user.username }}</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="{% url 'accounts:logout' %}">Logout</a>
+            </li>
+              {% endif %}
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="{% url 'app:game' %}">Game</a>
+            </li>
+          {% endblock %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% block container %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="header bg-primary text-white col-12 text-center">
+                <h1>Graph longest path</h1>
+                <p class="lead">...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container bg-light" style="height: 300px;" id="gallery">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+              {% if errors %}
+        {#                <ol>#}
+        {#                {% for error in errors %}#}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      <strong>Warning!</strong> {{ errors }}
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+        {#                {% endfor %}#}
+        {#                </ol>#}
+            {% endif %}
+          </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    <!-- Footer -->
+        <div class="container-fluid footer">
+            <div class="row">
+                <div class="col-12 py-5 bg-dark">
+                    <p class="m-0 text-center text-white">Copyright &copy; 2019 Pythonanywhere.com</p>
+{#                  </div>#}
+{#                    <div class="container">#}
+{#                    <p class="m-0 text-center text-white">Contact us Hojjatrt@gmail.com</p>#}
+{#                  </div>#}
+                </div>
+            </div>
+        </div>
+
+
+{#{% if messages %}#}
+{#<ul>#}
+{#	{% for message in messages %}#}
+{#	   <li>{{ message }}</li>#}
+{#	{% endfor %}#}
+{#</ul>#}
+{#{% endif %}#}
+
+
+    <script src="{% static 'accounts/js/jquery.min.js' %}"></script>
+    <script src="{% static 'accounts/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

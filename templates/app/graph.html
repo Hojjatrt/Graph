@@ -1,24 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="d3-context-menu.css" rel="stylesheet">
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block head %}
+    <link href="{% static 'app/css/d3-context-menu.css' %}" rel="stylesheet">
     <style type="text/css">
         .node {}
 
         .link { stroke: #999; stroke-opacity: 1; stroke-width: 5px; }
         .long { stroke: red; stroke-opacity: 1; stroke-width: 5px; }
         .red { font-weight: bold; color: red; font-size: large }
+        .longest-path {
+            color: #4677f8;
+            margin: 80px 20px 20px;
+        }
     </style>
-</head>
-<body>
-<h4 style="color: #4677f8; margin: 5px 20px" class="longest-path">Longest path from node1 to node7 is : </h4>
+{% endblock %}
+{% block container %}
+<h5 class="longest-path">Longest path from node1 to node7 is : </h5>
 <svg width="960" height="600"></svg>
-<script src="d3.v4.min.js" type="text/javascript"></script>
-<script src="d3-context-menu.js" type="text/javascript"></script>
-<script src="d3-selection-multi.v1.js" type="text/javascript"></script>
+<script src="{% static 'app/js/d3.v4.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'app/js/d3-context-menu.js' %}" type="text/javascript"></script>
+<script src="{% static 'app/js/d3-selection-multi.v1.js' %}" type="text/javascript"></script>
 
 <script type="text/javascript">
     var colors = d3.scaleOrdinal(d3.schemeCategory10);
@@ -464,5 +466,4 @@
 
 </script>
 
-</body>
-</html>
+{% endblock %}
