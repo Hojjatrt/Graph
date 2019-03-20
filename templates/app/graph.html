@@ -48,7 +48,7 @@
         .style('stroke','none');
 
     var simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(100).strength(1))
+        .force("link", d3.forceLink().id(function (d) {return d.num;}).distance(100).strength(1))
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -81,23 +81,6 @@
     //     update(graph.links, graph.nodes);
     // });
 
-    // var menu = [
-    //     {
-    //         title: 'Up',
-    //         action: function(d, i) {
-    //             console.log('Item #1 clicked!');
-    //             console.log('The data for this circle is: ' + d);
-    //         },
-    //         disabled: false // optional, defaults to false
-    //     },
-    //     {
-    //         title: 'Down',
-    //         action: function(d, i) {
-    //             console.log('You have clicked the second item!');
-    //             console.log('The data for this circle is: ' + d.id);
-    //         }
-    //     }
-    // ];
 
     var graph = {
         "nodes": [
@@ -106,56 +89,56 @@
                 "label": "",
                 "x": 20,
                 "y": 70,
-                "id": 1
+                "num": 1
             },
             {
                 "name": "node2",
                 "label": "",
                 "x": 80,
                 "y": 70,
-                "id": 2
+                "num": 2
             },
             {
                 "name": "node3",
                 "label": "",
                 "x": 70,
                 "y": 120,
-                "id": 3
+                "num": 3
             },
             {
                 "name": "node4",
                 "label": "",
                 "x": 130,
                 "y": 65,
-                "id": 4
+                "num": 4
             },
             {
                 "name": "node5",
                 "label": "",
                 "x": 135,
                 "y": 10,
-                "id": 5
+                "num": 5
             },
             {
                 "name": "node6",
                 "label": "",
                 "x": 180,
                 "y": 70,
-                "id": 6
+                "num": 6
             },
             {
                 "name": "node7",
                 "label": "",
                 "x": 200,
                 "y": 20,
-                "id": 7
+                "num": 7
             },
             {
                 "name": "node8",
                 "label": "",
                 "x": 230,
                 "y": 75,
-                "id": 8
+                "num": 8
             }
         ],
         "links": [
@@ -163,45 +146,45 @@
                 "source": 1,
                 "target": 2,
                 "weight": 15,
-                "id": 1
+                "num": 1
             },
             {
                 "source": 2,
                 "target": 3,
                 "weight": 5,
-                "id": 2
+                "num": 2
 
             },
             {
                 "source": 2,
                 "target": 4,
                 "weight": 20,
-                "id": 3
+                "num": 3
             },
             {
                 "source": 4,
                 "target": 5,
                 "weight": 10,
-                "id": 4
+                "num": 4
             },
             {
                 "source": 4,
                 "target": 6,
                 "weight": 5,
-                "id": 5
+                "num": 5
 
             },
             {
                 "source": 6,
                 "target": 7,
                 "weight": 20,
-                "id": 6
+                "num": 6
             },
             {
                 "source": 6,
                 "target": 8,
                 "weight": 10,
-                "id": 7
+                "num": 7
             }
         ]
     };
@@ -240,7 +223,7 @@
             // .attr('marker-end','url(#arrowhead)');
 
         link.append("title")
-            .attr("class", function (d) {return "title" + d.id})
+            .attr("class", function (d) {return "title" + d.num})
             .text(function (d) {return d.weight;});
 
         edgepaths = svg.selectAll(".edgepath")
@@ -251,7 +234,7 @@
                 'class': 'edgepath',
                 'fill-opacity': 0,
                 'stroke-opacity': 0,
-                'id': function (d, i) {return 'edgepath' + d.id}
+                'id': function (d, i) {return 'edgepath' + d.num}
             })
             .style("pointer-events", "none");
 
@@ -262,15 +245,15 @@
             .style("pointer-events", "none")
             .attrs({
                 'class': 'edgelabel',
-                'id': function (d, i) {return 'edgelabel' + d.id},
+                'id': function (d, i) {return 'edgelabel' + d.num},
                 'font-size': 20,
                 'fill': '#555'
             });
 
         edgelabels.append('textPath')
             .attrs({
-                'xlink:href': function (d, i) {return '#edgepath' + d.id},
-                'class': function (d) {return 'id' + d.id}
+                'xlink:href': function (d, i) {return '#edgepath' + d.num},
+                'class': function (d) {return 'id' + d.num}
             })
             .style("text-anchor", "middle")
             .style("pointer-events", "none")
@@ -314,7 +297,7 @@
             .style("fill", colors(1));
 
         node.append("title")
-            .text(function (d) {return d.id;});
+            .text(function (d) {return d.num;});
 
         node.append("text")
             .attr("dy", -3)
