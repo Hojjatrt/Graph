@@ -52,37 +52,9 @@
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
 
+    var uri = "http://127.0.0.1:8000/data/";
 
-    // var getJSON = function(url, callback) {
-    //   var xhr = new XMLHttpRequest();
-    //   xhr.open('get', url, true);
-    //   xhr.responseType = 'json';
-    //   xhr.onload = function() {
-    //     var status = xhr.status;
-    //     if (status === 200) {
-    //       callback(null, xhr.response);
-    //     } else {
-    //       callback(status);
-    //     }
-    //   };
-    //   xhr.send();
-    // };
-    //
-    // getJSON('graph.json', function(err, data) {
-    //   if (err != null) {
-    //     alert('Something went wrong: ' + err);
-    //   } else {
-    //     alert('Your Json result is:  ' + data);
-    //     update(data.links, data.nodes);
-    //   }
-    // });
-    // d3.json("http://localhost/graph/graph.json", function (error, graph) {
-    //     if (error) throw error;
-    //     update(graph.links, graph.nodes);
-    // });
-
-
-    var graph = {
+    var graph0 = {
         "nodes": [
             {
                 "name": "node1",
@@ -188,20 +160,25 @@
             }
         ]
     };
-
-    update(graph.links, graph.nodes);
-
-    //for longest path
-    var newgraph = {};
-    graph.nodes.forEach(function (node) {
-        newgraph[node.name] = {};
-    });
-    graph.links.forEach(function (link) {
-        newgraph[link.source.name][link.target.name] = link.weight;
-        newgraph[link.target.name][link.source.name] = link.weight;
-    });
     //choose start node
     var start = 'node1';
+    //for longest path
+    var newgraph = {};
+
+    d3.json(uri, function (error, graph) {
+        if (error) throw error;
+        update(graph.links, graph.nodes);
+
+        graph.nodes.forEach(function (node) {
+            newgraph[node.name] = {};
+        });
+        graph.links.forEach(function (link) {
+            newgraph[link.source.name][link.target.name] = link.weight;
+            newgraph[link.target.name][link.source.name] = link.weight;
+        });
+        var links = svg.selectAll(".link");
+        colorGraph(start, links, newgraph);
+    });
 
     function update(links, nodes) {
         link = svg.selectAll(".link")
