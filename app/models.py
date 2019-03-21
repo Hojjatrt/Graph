@@ -1,27 +1,34 @@
 from django.contrib.auth.models import User
 from django.db import models
 from .fields import *
-from .choices import *
 from django.utils.translation import ugettext_lazy as _
-# Create your models here.
-#
-#
-# class Graph(models.Model):
-#     nodes = models.CharField(_('Part1'), default="12", max_length=2)
-#     alpha = models.CharField(_('Alpha'), max_length=10, choices=ALPHA_CHOICES)
-#     part2 = models.CharField(_('Part2'), default="123", max_length=3)
-#     country = models.CharField(_('Country'), default="ایران", max_length=20)
-#     region = models.CharField(_('Region'), default="95", max_length=2)
-#     image = models.ImageField(_('Image'), upload_to='app/%Y/%m/%d', blank=True, null=True)
-#
-#     def save(self, force_insert=False, force_update=False, using=None,
-#              update_fields=None):
-#
-#         super(Graph, self).save(force_insert, force_update)
-#
-#     def __str__(self):
-#         return self.part1 + self.alpha + self.part2
-#
-#     class Meta:
-#         verbose_name = _("Plaque")
-#         verbose_name_plural = _("Plaques")
+
+
+class Node(models.Model):
+    num = models.PositiveSmallIntegerField(_('Number'), unique=True)
+    x = models.SmallIntegerField(_('X'))
+    y = models.SmallIntegerField(_('Y'))
+    name = models.CharField(_('Name'), max_length=10, default='node')
+
+    def __str__(self):
+        return self.name
+
+
+class Link(models.Model):
+    num = models.PositiveSmallIntegerField(_('Number'), unique=True)
+    source = models.ForeignKey(Node, verbose_name=_('Source'), related_name="sources", on_delete=models.CASCADE)
+    target = models.ForeignKey(Node, verbose_name=_('Target'), related_name="targets", on_delete=models.CASCADE)
+    weight = models.SmallIntegerField(_('Weight'))
+
+    def __str__(self):
+        return str(self.num) + " - " + str(self.weight)
+
+
+class Graph(models.Model):
+    level = models.PositiveSmallIntegerField(_('Level'))
+    nodes = models.ManyToManyField(Node, verbose_name=_('Nodes'))
+    links = models.ManyToManyField(Link, verbose_name=_('Links'))
+    name = models.CharField(_('Name'), max_length=10, default='node')
+
+    def __str__(self):
+        return self.name
