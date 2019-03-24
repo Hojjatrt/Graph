@@ -32,3 +32,43 @@ class Graph(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PlayerLink(models.Model):
+    best_weight = models.PositiveSmallIntegerField(_('Weight'))
+    player = models.ForeignKey(User, verbose_name=_('Player'), on_delete=models.CASCADE)
+    link = models.ForeignKey(Link, verbose_name=_('Link'), on_delete=models.CASCADE)
+    graph = models.ForeignKey(Graph, verbose_name=_('Graph'), on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.best_weight) + " .L " + str(self.link.num)
+
+
+class PlayerLinkAdvanced(models.Model):
+    weight = models.PositiveSmallIntegerField(_('Weight'))
+    player = models.ForeignKey(User, verbose_name=_('Player'), on_delete=models.CASCADE)
+    link = models.ForeignKey(Link, verbose_name=_('Link'), on_delete=models.CASCADE)
+    graph = models.ForeignKey(Graph, verbose_name=_('Graph'), on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(_('TimeStamp'), auto_now_add=True)
+
+    def __str__(self):
+        return str(self.weight) + " .L " + str(self.link.num)
+
+
+class Score(models.Model):
+    best_score = models.PositiveSmallIntegerField(_('Best Score'))
+    player = models.ForeignKey(User, verbose_name=_('Player'), on_delete=models.CASCADE)
+    graph = models.ForeignKey(Graph, verbose_name=_('Graph'), on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.best_score) + " .player " + str(self.player.username)
+
+
+class ScoreAdvances(models.Model):
+    score = models.PositiveSmallIntegerField(_('Best Score'))
+    player = models.ForeignKey(User, verbose_name=_('Player'), on_delete=models.CASCADE)
+    graph = models.ForeignKey(Graph, verbose_name=_('Graph'), on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(_('TimeStamp'), auto_now_add=True)
+
+    def __str__(self):
+        return str(self.score) + " .player " + str(self.player.username)

@@ -5,3 +5,7 @@ from .models import *
 admin.site.register(Node)
 admin.site.register(Link)
 admin.site.register(Graph)
+admin.site.register(PlayerLink)
+admin.site.register(PlayerLinkAdvanced)
+admin.site.register(Score)
+admin.site.register(ScoreAdvances)
