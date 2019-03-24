@@ -65,7 +65,7 @@ class Score(models.Model):
 
 
 class ScoreAdvances(models.Model):
-    score = models.PositiveSmallIntegerField(_('Best Score'))
+    score = models.FloatField(_('Score'))
     player = models.ForeignKey(User, verbose_name=_('Player'), on_delete=models.CASCADE)
     graph = models.ForeignKey(Graph, verbose_name=_('Graph'), on_delete=models.CASCADE)
     timestamp = models.DateTimeField(_('TimeStamp'), auto_now_add=True)
