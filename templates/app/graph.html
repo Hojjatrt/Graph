@@ -165,6 +165,7 @@
     var start = 'node1';
     //for longest path
     var newgraph = {};
+    var nodelist = [];
 
     d3.json(uri, function (error, graph) {
         if (error) throw error;
@@ -172,11 +173,13 @@
 
         graph.nodes.forEach(function (node) {
             newgraph[node.name] = {};
+            nodelist.push(node.name);
         });
         graph.links.forEach(function (link) {
             newgraph[link.source.name][link.target.name] = link.weight;
             newgraph[link.target.name][link.source.name] = link.weight;
         });
+        console.log(nodelist);
         var links = svg.selectAll(".link");
         colorGraph(start, links, newgraph);
     });
@@ -408,31 +411,47 @@
 
     function colorGraph(start, links, newgraph) {
         //get all solutions
-        var solutions = solve(newgraph, start);
-        //limit solutions
-        var maximum_dist = {};
-        maximum_dist.dist = 0;
-        for(var s in solutions) {
-          if(!solutions[s]) continue;
-          if(solutions[s].dist > maximum_dist.dist)
-              maximum_dist = solutions[s];
+        var solution , maxSolution, temp, tempst, st;
+        maxSolution = {dist: 0};
+        for(var i in nodelist){
+            console.log(nodelist, nodelist[i]);
+            temp = solve(newgraph, nodelist[i]);
+            console.log("temp:", temp);
+            //limit solutions
+            var maximum_dist = {};
+            maximum_dist.dist = 0;
+            for(var s in temp) {
+                if(!temp[s]) continue;
+                if(temp[s].dist > maximum_dist.dist)
+                    maximum_dist = temp[s];
+                if(temp[s].dist === 0)
+                    tempst = s;
+            }
+            {#maximum_dist.insert(0, nodelist[i]);#}
+            console.log("maximum dist :", maximum_dist);
+            if(maximum_dist.dist > maxSolution.dist){
+                maxSolution = maximum_dist;
+                solution = temp;
+                st = tempst;
+            }
         }
-        console.log(solutions, maximum_dist);
-        longest_path.html("Longest path from <span class='red'>" + start + "</span> to <span class='red'>" + maximum_dist[maximum_dist.length - 1] +
-            "</span> is : " + maximum_dist.dist);
-        var prev = start;
+
+        console.log("solution , st:", st, solution, maxSolution);
+        longest_path.html("Longest path from <span class='red'>" + st + "</span> to <span class='red'>" + maxSolution[maxSolution.length - 1] +
+            "</span> is : " + maxSolution.dist);
+        var prev = st;
         links.each(function (d) {
            d3.select(this).attr("class", "link");
         });
-        for(var s in maximum_dist){
+        for(var s in maxSolution){
             links.each(function (d) {
-                if(d.source.name === prev && d.target.name === maximum_dist[s])
+                if((d.source.name === prev && d.target.name === maxSolution[s] )||( d.source.name === maxSolution[s] && d.target.name === prev))
                 {
                     d3.select(this).attr("class", "link long");
                     return
                 }
             });
-            prev = maximum_dist[s];
+            prev = maxSolution[s];
         }
     }
 
